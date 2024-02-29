@@ -13,24 +13,30 @@ interface WebfingerResponse {
     links: WebfingerLinks[]
 }
 
-function userFromResource(resource: string): string | undefined {
-    const match = resource.match(/^acct:(.*)@novum.streats.dev$/);
-    if (match) {
-        return match[1];
+interface UserResult {
+    name?: string,
+    host?: string
+}
+
+function userFromResource(resource: string): UserResult {
+    const match = resource.match(/^acct:@?([a-z0-9-]+)@(.*)$/);
+    return {
+        name: match?.[1],
+        host: match?.[2]
     }
 }
 
 export const handleWebfinger: RequestHandler = (req, res) => {
     const db: Database = req.app.locals.db;
     const hostname: string = req.app.locals.host;
-    const username = userFromResource(req.query.resource as string); //wtf better checking todo
-    if (!username) {
+    const resource = userFromResource(req.query.resource as string); //wtf better checking todo
+    if (!resource.name || !resource.host || !hostname.endsWith(resource.host)) {
         res.sendStatus(404);
         return;
     }
 
     const stmt = db.prepare('SELECT id FROM actors WHERE id = ?');
-    const user = stmt.get(username) as DBActor;
+    const user = stmt.get(resource.name) as DBActor;
 
     if (!user) {
         res.sendStatus(404);
