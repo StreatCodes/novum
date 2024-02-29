@@ -4,6 +4,7 @@ import { handleWebfinger } from './webfinger';
 import { actorHandler } from './actor';
 import { Server } from "http";
 import { URL } from 'url';
+import { inboxHandler } from './inbox';
 
 let server: Server | undefined = undefined;
 const db = new Sqlite('novum.db');
@@ -28,8 +29,10 @@ process.on('SIGINT', () => {
 
 const app = express();
 app.locals.db = db;
-app.get('/actor/:username', actorHandler);
+app.use(express.json());
 app.get('/.well-known/webfinger', handleWebfinger);
+app.get('/actor/:username', actorHandler);
+app.post('/actor/:username/inbox', inboxHandler);
 
 const url = new URL(`http://${host}:${port}/`);
 console.log(`Server running at http://${url.hostname}:${url.port}/`);
