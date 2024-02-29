@@ -29,7 +29,9 @@ process.on('SIGINT', () => {
 
 const app = express();
 app.locals.db = db;
-app.use(express.json());
+app.use(express.json({
+    type: ['application/activity+json', 'application/ld+json', 'application/json']
+}));
 app.get('/.well-known/webfinger', handleWebfinger);
 app.get('/actor/:username', actorHandler);
 app.post('/actor/:username/inbox', inboxHandler);
