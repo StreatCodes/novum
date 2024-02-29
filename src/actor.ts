@@ -54,5 +54,6 @@ export const actorHandler: RequestHandler = (req, res) => {
         "icon": user.icon
     }
 
+    res.type('application/activity+json');
     res.json(actor)
 }

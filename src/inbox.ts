@@ -36,5 +36,6 @@ export const inboxHandler: RequestHandler = (req, res) => {
 
     const stmt = db.prepare('INSERT INTO activities (id, actor_id, type, data) VALUES (?, ?, ?, ?)');
     stmt.run(data.id, username, data.type, JSON.stringify(data));
+    res.type('application/activity+json');
     res.sendStatus(200);
 };
