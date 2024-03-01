@@ -1,5 +1,5 @@
-import { RequestHandler } from "express"
-import { Database } from "better-sqlite3";
+import { Next, ParameterizedContext } from "koa";
+import { ContextState } from ".";
 
 interface APubActor {
     "@context": "https://www.w3.org/ns/activitystreams",
@@ -25,16 +25,16 @@ export interface DBActor {
     url?: string
 }
 
-export const actorHandler: RequestHandler = (req, res) => {
-    const db: Database = req.app.locals.db;
-    const hostname: string = req.app.locals.host;
-    const username = req.params.username;
+export const actorHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
+    const db = ctx.state.db;
+    const hostname = ctx.state.host;
+    const username = ctx.params.username;
 
     const stmt = db.prepare('SELECT * FROM actors WHERE id = ?');
     const user = stmt.get(username) as DBActor;
 
     if (!user) {
-        res.sendStatus(404);
+        ctx.response.status = 404;
         return;
     }
 
@@ -54,6 +54,6 @@ export const actorHandler: RequestHandler = (req, res) => {
         "icon": user.icon
     }
 
-    res.type('application/activity+json');
-    res.json(actor)
+    ctx.response.type = 'application/activity+json';
+    ctx.response.body = JSON.stringify(actor);
 }

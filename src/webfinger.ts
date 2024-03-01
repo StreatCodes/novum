@@ -1,6 +1,6 @@
-import { Database } from "better-sqlite3";
-import { RequestHandler } from "express";
 import { DBActor } from "./actor";
+import { ParameterizedContext, Next } from 'koa';
+import { ContextState } from ".";
 
 interface WebfingerLinks {
     rel: string,
@@ -26,12 +26,18 @@ function userFromResource(resource: string): UserResult {
     }
 }
 
-export const handleWebfinger: RequestHandler = (req, res) => {
-    const db: Database = req.app.locals.db;
-    const hostname: string = req.app.locals.host;
-    const resource = userFromResource(req.query.resource as string); //wtf better checking todo
+export const handleWebfinger = (ctx: ParameterizedContext<ContextState>, next: Next) => {
+    const db = ctx.state.db;
+    const hostname = ctx.state.host;
+    const queryResource = ctx.query['resource'];
+    if (typeof queryResource !== 'string') {
+        ctx.response.status = 400;
+        return undefined;
+    }
+
+    const resource = userFromResource(queryResource);
     if (!resource.name || !resource.host || !hostname.endsWith(resource.host)) {
-        res.sendStatus(404);
+        ctx.response.status = 404;
         return;
     }
 
@@ -39,12 +45,12 @@ export const handleWebfinger: RequestHandler = (req, res) => {
     const user = stmt.get(resource.name) as DBActor;
 
     if (!user) {
-        res.sendStatus(404);
+        ctx.response.status = 404;
         return;
     }
 
     const webfinger: WebfingerResponse = {
-        subject: req.query.resource as string, //TODO aswell
+        subject: queryResource,
         links: [
             {
                 rel: "self",
@@ -54,5 +60,6 @@ export const handleWebfinger: RequestHandler = (req, res) => {
         ]
     }
 
-    res.json(webfinger);
+    ctx.response.type = 'application/jrd+json';
+    ctx.response.body = JSON.stringify(webfinger);
 }

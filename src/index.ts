@@ -1,10 +1,17 @@
-import express from 'express';
+import Koa from 'koa';
+import Router from '@koa/router';
 import Sqlite from 'better-sqlite3';
 import { handleWebfinger } from './webfinger';
 import { actorHandler } from './actor';
 import { Server } from "http";
 import { URL } from 'url';
 import { getInboxHandler, postInboxHandler } from './inbox';
+import { bodyParser } from '@koa/bodyparser';
+
+export interface ContextState {
+    db: Sqlite.Database;
+    host: string;
+}
 
 let server: Server | undefined = undefined;
 const db = new Sqlite('novum.db');
@@ -27,18 +34,24 @@ process.on('SIGINT', () => {
     db.close();
 });
 
-const app = express();
-app.locals.db = db;
-app.use(express.json({
-    type: ['application/activity+json', 'application/ld+json', 'application/json']
-}));
-app.get('/.well-known/webfinger', handleWebfinger);
-app.get('/actor/:username', actorHandler);
-app.post('/actor/:username/inbox', postInboxHandler);
-app.get('/actor/:username/inbox', getInboxHandler);
+const app = new Koa();
+const router = new Router();
+
+router.get('/.well-known/webfinger', handleWebfinger);
+router.get('/actor/:username', actorHandler);
+router.post('/actor/:username/inbox', postInboxHandler);
+router.get('/actor/:username/inbox', getInboxHandler);
 
 const url = new URL(`http://${host}:${port}/`);
 console.log(`Server running at http://${url.hostname}:${url.port}/`);
 
-app.locals.host = publicUrl || url.origin;
+app.use(async (ctx, next) => {
+    ctx.state.db = db;
+    ctx.state.host = publicUrl || url.origin;
+    await next();
+});
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.use(bodyParser());
+
 server = app.listen(Number(url.port), url.hostname);

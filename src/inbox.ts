@@ -1,5 +1,5 @@
-import { Database } from "better-sqlite3";
-import { RequestHandler } from "express";
+import { Next, ParameterizedContext } from "koa";
+import { ContextState } from ".";
 
 interface APubOrderedCollection {
     "@context": "https://www.w3.org/ns/activitystreams",
@@ -38,26 +38,27 @@ interface DBActivity {
     data: string
 }
 
-export const postInboxHandler: RequestHandler = (req, res) => {
-    const db: Database = req.app.locals.db;
-    const username = req.params.username;
+export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
+    const db = ctx.state.db;
+    const username = ctx.query['username'];
 
-    const data: APubActivity = req.body;
+    const data: APubActivity = ctx.request.body;
 
     if (data.type !== 'Create' && data.type !== 'Follow') {
-        res.sendStatus(501);
+        ctx.response.status = 501;
         return;
     }
 
     const stmt = db.prepare('INSERT INTO activities (id, actor_id, type, data) VALUES (?, ?, ?, ?)');
     stmt.run(data.id, username, data.type, JSON.stringify(data));
-    res.type('application/activity+json');
-    res.sendStatus(200);
+
+    ctx.response.type = 'application/activity+json';
+    ctx.response.status = 200;
 };
 
-export const getInboxHandler: RequestHandler = (req, res) => {
-    const db: Database = req.app.locals.db;
-    const username = req.params.username;
+export const getInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
+    const db = ctx.state.db;
+    const username = ctx.query['username'];
 
     const stmt = db.prepare(`SELECT * FROM activities WHERE actor_id = ? AND type='Create'`);
     const results = stmt.get(username) as DBActivity[];
@@ -74,6 +75,6 @@ export const getInboxHandler: RequestHandler = (req, res) => {
         orderedItems: notes
     }
 
-    res.type('application/activity+json');
-    res.send(collection);
+    ctx.response.type = 'application/activity+json';
+    ctx.response.body = JSON.stringify(collection);
 }
