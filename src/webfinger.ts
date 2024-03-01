@@ -1,6 +1,6 @@
-import { DBActor } from "./actor";
 import { ParameterizedContext, Next } from 'koa';
 import { ContextState } from ".";
+import { getActorById } from "./database";
 
 interface WebfingerLinks {
     rel: string,
@@ -41,8 +41,7 @@ export const handleWebfinger = (ctx: ParameterizedContext<ContextState>, next: N
         return;
     }
 
-    const stmt = db.prepare('SELECT id FROM actors WHERE id = ?');
-    const user = stmt.get(resource.name) as DBActor;
+    const user = getActorById(db, resource.name);
 
     if (!user) {
         ctx.response.status = 404;

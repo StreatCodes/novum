@@ -1,37 +1,14 @@
 import { Next, ParameterizedContext } from "koa";
 import { ContextState } from ".";
-
-interface APubActor {
-    "@context": "https://www.w3.org/ns/activitystreams",
-    type: "Person",
-    id: string,
-    following: string,
-    followers: string,
-    liked: string,
-    inbox: string,
-    outbox: string,
-    preferredUsername?: string,
-    name: string,
-    summary?: string,
-    icon?: string,
-    url?: string,
-}
-
-export interface DBActor {
-    id: string,
-    preferred_username?: string,
-    summary?: string,
-    icon?: string,
-    url?: string
-}
+import { getActorById } from "./database";
+import { APubActor } from "./activity-pub";
 
 export const actorHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     const db = ctx.state.db;
     const hostname = ctx.state.host;
     const username = ctx.params.username;
 
-    const stmt = db.prepare('SELECT * FROM actors WHERE id = ?');
-    const user = stmt.get(username) as DBActor;
+    const user = getActorById(db, username);
 
     if (!user) {
         ctx.response.status = 404;
