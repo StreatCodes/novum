@@ -8,7 +8,7 @@ interface WebfingerLinks {
     href: string
 }
 
-interface WebfingerResponse {
+export interface WebfingerResponse {
     subject: string,
     links: WebfingerLinks[]
 }
