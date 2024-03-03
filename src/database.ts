@@ -23,7 +23,7 @@ export function createActor(db: Database, actor: DBActor) {
 }
 
 export function getActorById(db: Database, actorId: string): DBActor | undefined {
-    const stmt = db.prepare('SELECT id FROM actors WHERE id = ?');
+    const stmt = db.prepare('SELECT * FROM actors WHERE id = ?');
     return stmt.get(actorId) as DBActor | undefined;
 }
 
