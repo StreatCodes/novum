@@ -27,15 +27,46 @@ export function getActorById(db: Database, actorId: string): DBActor | undefined
     return stmt.get(actorId) as DBActor | undefined;
 }
 
-export interface DBActivity {
+export interface DBInboxItem {
     id: string,
     actor_id: string,
-    type: string,
-    data: string
+    type: 'Note',
+    content?: string,
+    received: string,
+    published?: string,
+    attributedTo?: string
 }
 
-//TODO fix any
-export function insertActivity(db: Database, actorId: string, data: any) {
-    const stmt = db.prepare('INSERT INTO activities (id, actor_id, type, data) VALUES (?, ?, ?, ?)');
-    stmt.run(data.id, actorId, data.type, JSON.stringify(data));
+export function getInboxItems(db: Database, username: string): DBInboxItem[] {
+    const stmt = db.prepare(`SELECT * FROM inbox WHERE actor_id = ?`);
+    return stmt.all(username) as DBInboxItem[];
 }
+
+export function addItemToInbox(db: Database, item: DBInboxItem) {
+    const stmt = db.prepare(`INSERT INTO inbox
+    (id, actor_id, type, content, received, published, attributedTo)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`);
+    stmt.run(item.id, item.actor_id, item.type, item.content, item.received, item.published, item.attributedTo);
+}
+
+
+export interface DBFollow {
+    id: string,
+    actor_id: string,
+    received: string,
+    published?: string,
+    attributedTo?: string
+}
+
+export function getFollowers(db: Database, username: string): DBFollow[] {
+    const stmt = db.prepare(`SELECT * FROM followers WHERE actor_id = ?`);
+    return stmt.all(username) as DBFollow[];
+}
+
+export function addFollower(db: Database, follow: DBFollow) {
+    // const stmt = db.prepare(`INSERT INTO followers
+    // (TODO)
+    // VALUES (?)`);
+    // stmt.run(item.id);
+}
+

@@ -15,7 +15,12 @@ export function initServer(db: Database, listenAddr: string, listenPort: number,
     router.post('/actor/:username/inbox', postInboxHandler);
     router.get('/actor/:username/inbox', getInboxHandler);
 
-
+    app.use(bodyParser({
+        encoding: undefined,
+        extendTypes: {
+            json: ['application/activity+json', 'application/json']
+        }
+    }));
     app.use(async (ctx, next) => {
         ctx.state.db = db;
         ctx.state.host = publicUrl;
@@ -23,7 +28,6 @@ export function initServer(db: Database, listenAddr: string, listenPort: number,
     });
     app.use(router.routes());
     app.use(router.allowedMethods());
-    app.use(bodyParser());
 
     return app.listen(listenPort, listenAddr);
 }

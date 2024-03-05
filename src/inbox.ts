@@ -1,7 +1,7 @@
 import { Next, ParameterizedContext } from "koa";
 import { ContextState } from ".";
 import { APubActivity, APubNote, APubOrderedCollection } from "./activity-pub";
-import { DBActivity, insertActivity } from "./database";
+import { addFollower, addItemToInbox, getActorById, getInboxItems } from "./database";
 
 export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     const db = ctx.state.db;
@@ -9,35 +9,60 @@ export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: 
 
     const data: APubActivity = ctx.request.body;
 
-    if (data.type !== 'Create' && data.type !== 'Follow') {
-        ctx.response.status = 501;
-        return;
+    switch (data.type) {
+        case 'Create':
+            if (data.object?.type !== 'Note') {
+                console.log("Can't create inbox item - Unknown object type:", data);
+                ctx.response.status = 501;
+                return
+            }
+
+            addItemToInbox(db, {
+                actor_id: username,
+                id: data.id,
+                type: data.object?.type,
+                content: data.object.content,
+                received: new Date().toISOString(),
+                attributedTo: data.object.attributedTo
+            });
+
+            ctx.response.status = 200;
+            break;
+        case 'Follow':
+            console.log('Received follow:', data)
+            // addFollower(db, {
+            //     data
+            // });
+
+            ctx.response.status = 200;
+            break;
+        default:
+            console.log('Received unknown inbox request:', data)
+            ctx.response.status = 501;
+            break;
     }
 
-    insertActivity(db, username, data);
-
     ctx.response.type = 'application/activity+json';
-    ctx.response.status = 200;
+    return;
 };
 
 export const getInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     const db = ctx.state.db;
     const username = ctx.params.username;
 
-    //TODO
-    const stmt = db.prepare(`SELECT * FROM activities WHERE actor_id = ? AND type='Create'`);
-    const results = stmt.get(username) as DBActivity[];
-    const notes = results
-        .map((activity) => JSON.parse(activity.data) as APubActivity)
-        .filter(activity => !!activity.object)
-        .map(activity => activity.object as APubNote);
+    const userExists = getActorById(db, username);
+    if (!userExists) {
+        ctx.response.status = 404;
+        return;
+    }
+    const items = getInboxItems(db, username);
 
     const collection: APubOrderedCollection = {
         "@context": "https://www.w3.org/ns/activitystreams",
         summary: `${username}'s notes`,
         type: "OrderedCollection",
-        totalItems: results.length,
-        orderedItems: notes
+        totalItems: items.length,
+        orderedItems: items
     }
 
     ctx.response.type = 'application/activity+json';

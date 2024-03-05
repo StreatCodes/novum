@@ -37,6 +37,7 @@ export interface APubNote {
     id?: string,
     content?: string,
     name?: string,
+    attributedTo?: string,
     conversation?: string,
     published?: string,
     summary?: string,

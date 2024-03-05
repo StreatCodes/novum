@@ -6,8 +6,8 @@ import { APubActor } from '../activity-pub';
 
 test('Non existant actor should 404', async (t) => {
     const db = await initTestDB();
+    t.after(() => db.close());
     const server = initServer(db, 'localhost', 9999, 'https://example.com');
-    console.log('listen address', server.address());
     t.after(() => server.close());
 
     const res = await fetch('http://localhost:9999/actor/nonexistant')
@@ -16,6 +16,7 @@ test('Non existant actor should 404', async (t) => {
 
 test('Fetching an existing actor should return 200', async (t) => {
     const db = await initTestDB();
+    t.after(() => db.close());
     createActor(db, {
         id: 'testuser',
         preferred_username: 'Test User',
