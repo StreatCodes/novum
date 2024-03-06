@@ -18,16 +18,15 @@ CREATE TABLE inbox (
     FOREIGN KEY (actor_id) REFERENCES actors(id)
 );
 
---TODO not final
 CREATE TABLE followers (
     id TEXT PRIMARY KEY,
     actor_id TEXT NOT NULL,
     follower_id TEXT NOT NULL,
+    received TEXT NOT NULL,
 
     FOREIGN KEY (actor_id) REFERENCES actors(id)
 );
 
 -- "outbox": `${hostname}/actor/${user.id}/outbox`,
 -- "following": `${hostname}/actor/${user.id}/following`,
--- "followers": `${hostname}/actor/${user.id}/followers`,
 -- "liked": `${hostname}/actor/${user.id}/liked`,

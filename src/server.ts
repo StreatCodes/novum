@@ -5,6 +5,7 @@ import { bodyParser } from "@koa/bodyparser";
 import { handleWebfinger } from './webfinger';
 import { actorHandler } from './actor';
 import { getInboxHandler, postInboxHandler } from './inbox';
+import { getFollowersHandler } from './follows';
 
 export function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -14,6 +15,7 @@ export function initServer(db: Database, listenAddr: string, listenPort: number,
     router.get('/actor/:username', actorHandler);
     router.post('/actor/:username/inbox', postInboxHandler);
     router.get('/actor/:username/inbox', getInboxHandler);
+    router.get('/actor/:username/followers', getFollowersHandler);
 
     app.use(bodyParser({
         encoding: undefined,

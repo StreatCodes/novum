@@ -19,17 +19,17 @@ export interface APubOrderedCollection {
     summary: string,
     type: "OrderedCollection",
     totalItems: number,
-    orderedItems: APubNote[]
+    orderedItems: APubNote[] | APubFollower[]
 }
 
 export interface APubActivity {
     "@context": "https://www.w3.org/ns/activitystreams",
     actor: string,
     id: string,
-    type: 'Create' | 'Follow',
+    type: 'Create' | 'Follow' | 'Undo',
     published?: string,
     to?: string,
-    object?: APubNote
+    object?: APubNote | APubFollower | APubFollow
 }
 
 export interface APubNote {
@@ -43,4 +43,12 @@ export interface APubNote {
     summary?: string,
     to?: string,
     url?: string
+}
+
+export type APubFollower = string;
+export interface APubFollow {
+    id: string,
+    type: 'Follow',
+    actor: string,
+    object: string
 }

@@ -49,13 +49,11 @@ export function addItemToInbox(db: Database, item: DBInboxItem) {
     stmt.run(item.id, item.actor_id, item.type, item.content, item.received, item.published, item.attributedTo);
 }
 
-
 export interface DBFollow {
     id: string,
     actor_id: string,
-    received: string,
-    published?: string,
-    attributedTo?: string
+    follower_id: string,
+    received: string
 }
 
 export function getFollowers(db: Database, username: string): DBFollow[] {
@@ -64,9 +62,14 @@ export function getFollowers(db: Database, username: string): DBFollow[] {
 }
 
 export function addFollower(db: Database, follow: DBFollow) {
-    // const stmt = db.prepare(`INSERT INTO followers
-    // (TODO)
-    // VALUES (?)`);
-    // stmt.run(item.id);
+    const stmt = db.prepare(`INSERT INTO followers
+    (id, actor_id, follower_id, received)
+    VALUES (?, ?, ?, ?)`);
+    stmt.run(follow.id, follow.actor_id, follow.follower_id, follow.received);
 }
 
+export function deleteFollower(db: Database, following: string, follower: string) {
+    const stmt = db.prepare(`DELETE FROM followers
+    WHERE actor_id = ? AND follower_id = ?`);
+    stmt.run(following, follower);
+}
