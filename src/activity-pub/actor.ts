@@ -1,6 +1,6 @@
 import type { Next, ParameterizedContext } from "koa";
-import type { ContextState } from "./index.ts";
-import { getActorById } from "./database.ts";
+import type { ContextState } from "../index.ts";
+import { getActorById } from "../database.ts";
 import type { APubActor } from "./activity-pub.ts";
 
 export const actorHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {

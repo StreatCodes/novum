@@ -3,9 +3,9 @@ import Router from '@koa/router';
 import type { Database } from "better-sqlite3";
 import { bodyParser } from "@koa/bodyparser";
 import { handleWebfinger } from './webfinger.ts';
-import { actorHandler } from './actor.ts';
-import { getInboxHandler, postInboxHandler } from './inbox.ts';
-import { getFollowersHandler } from './follows.ts';
+import { actorHandler } from './activity-pub/actor.ts';
+import { getInboxHandler, postInboxHandler } from './activity-pub/inbox.ts';
+import { getFollowersHandler } from './activity-pub/follows.ts';
 import { handleIndex } from './web/index.ts';
 
 export function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
@@ -19,6 +19,7 @@ export function initServer(db: Database, listenAddr: string, listenPort: number,
     router.get('/actor/:username/inbox', getInboxHandler);
     router.get('/actor/:username/followers', getFollowersHandler);
 
+    //Web handles
     router.get('/', handleIndex)
 
     app.use(bodyParser({
