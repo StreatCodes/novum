@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createActor, initTestDB } from '../database';
-import { initServer } from '../server';
-import { APubActor } from '../activity-pub';
+import { createActor, initTestDB } from '../database.ts';
+import { initServer } from '../server.ts';
+import type { APubActor } from '../activity-pub.ts';
 
 test('Non existant actor should 404', async (t) => {
     const db = await initTestDB();

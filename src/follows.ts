@@ -1,7 +1,7 @@
-import { Next, ParameterizedContext } from "koa";
-import { ContextState } from ".";
-import { APubOrderedCollection } from "./activity-pub";
-import { getActorById, getFollowers, getInboxItems } from "./database";
+import type { Next, ParameterizedContext } from "koa";
+import type { ContextState } from "./index.ts";
+import type { APubOrderedCollection } from "./activity-pub.ts";
+import { getActorById, getFollowers } from "./database.ts";
 
 export const getFollowersHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     const db = ctx.state.db;

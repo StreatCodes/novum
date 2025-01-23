@@ -1,4 +1,4 @@
-import Sqlite, { Database } from "better-sqlite3";
+import Sqlite, { type Database } from "better-sqlite3";
 import fs from 'node:fs/promises';
 
 export async function initTestDB(): Promise<Database> {

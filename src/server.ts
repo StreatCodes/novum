@@ -1,21 +1,25 @@
 import Koa from 'koa';
 import Router from '@koa/router';
-import { Database } from "better-sqlite3";
+import type { Database } from "better-sqlite3";
 import { bodyParser } from "@koa/bodyparser";
-import { handleWebfinger } from './webfinger';
-import { actorHandler } from './actor';
-import { getInboxHandler, postInboxHandler } from './inbox';
-import { getFollowersHandler } from './follows';
+import { handleWebfinger } from './webfinger.ts';
+import { actorHandler } from './actor.ts';
+import { getInboxHandler, postInboxHandler } from './inbox.ts';
+import { getFollowersHandler } from './follows.ts';
+import { handleIndex } from './web/index.ts';
 
 export function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
     const router = new Router();
 
+    //APub handles
     router.get('/.well-known/webfinger', handleWebfinger);
     router.get('/actor/:username', actorHandler);
     router.post('/actor/:username/inbox', postInboxHandler);
     router.get('/actor/:username/inbox', getInboxHandler);
     router.get('/actor/:username/followers', getFollowersHandler);
+
+    router.get('/', handleIndex)
 
     app.use(bodyParser({
         encoding: undefined,

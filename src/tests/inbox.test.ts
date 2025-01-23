@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addFollower, addItemToInbox, createActor, getFollowers, getInboxItems, initTestDB } from '../database';
-import { initServer } from '../server';
-import { APubFollower, APubNote, APubOrderedCollection } from '../activity-pub';
+import { addFollower, addItemToInbox, createActor, getFollowers, getInboxItems, initTestDB } from '../database.ts';
+import { initServer } from '../server.ts';
+import type { APubFollower, APubNote, APubOrderedCollection } from '../activity-pub.ts';
 
 test('Non existant inbox should 404', async (t) => {
     const db = await initTestDB();

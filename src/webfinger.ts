@@ -1,6 +1,6 @@
-import { ParameterizedContext, Next } from 'koa';
-import { ContextState } from ".";
-import { getActorById } from "./database";
+import type { ParameterizedContext, Next } from 'koa';
+import type { ContextState } from "./index.ts";
+import { getActorById } from "./database.ts";
 
 interface WebfingerLinks {
     rel: string,
