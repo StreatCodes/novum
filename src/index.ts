@@ -26,7 +26,7 @@ if (!host) {
 const url = new URL(`http://${host}:${port}/`);
 console.log(`Server running at http://${url.hostname}:${url.port}/`);
 
-const server = initServer(db, url.hostname, Number(url.port), publicUrl || url.origin)
+const server = await initServer(db, url.hostname, Number(url.port), publicUrl || url.origin);
 
 process.on('SIGINT', () => {
     server.close();

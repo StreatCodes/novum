@@ -2,25 +2,28 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import type { Database } from "better-sqlite3";
 import { bodyParser } from "@koa/bodyparser";
-import { handleWebfinger } from './webfinger.ts';
-import { actorHandler } from './activity-pub/actor.ts';
-import { getInboxHandler, postInboxHandler } from './activity-pub/inbox.ts';
-import { getFollowersHandler } from './activity-pub/follows.ts';
-import { handleIndex } from './web/index.ts';
+import { handleWebfinger as getWebfinger } from './webfinger.ts';
+import { actorHandler as getApubActor } from './activity-pub/actor.ts';
+import { getInboxHandler as getApubInbox, postInboxHandler as postApubInbox } from './activity-pub/inbox.ts';
+import { getFollowersHandler as getApubFollowers } from './activity-pub/follows.ts';
+import { getIndex } from './web/index.ts';
+import { compileTemplates } from './web/template.ts';
+import { getLogin } from './web/login.ts';
 
-export function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
+export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
     const router = new Router();
 
     //APub handles
-    router.get('/.well-known/webfinger', handleWebfinger);
-    router.get('/actor/:username', actorHandler);
-    router.post('/actor/:username/inbox', postInboxHandler);
-    router.get('/actor/:username/inbox', getInboxHandler);
-    router.get('/actor/:username/followers', getFollowersHandler);
+    router.get('/.well-known/webfinger', getWebfinger);
+    router.get('/actor/:username', getApubActor);
+    router.post('/actor/:username/inbox', postApubInbox);
+    router.get('/actor/:username/inbox', getApubInbox);
+    router.get('/actor/:username/followers', getApubFollowers);
 
     //Web handles
-    router.get('/', handleIndex)
+    router.get('/', getIndex);
+    router.get('/login', getLogin)
 
     app.use(bodyParser({
         encoding: undefined,
@@ -35,6 +38,8 @@ export function initServer(db: Database, listenAddr: string, listenPort: number,
     });
     app.use(router.routes());
     app.use(router.allowedMethods());
+
+    await compileTemplates('src/web/templates');
 
     return app.listen(listenPort, listenAddr);
 }
