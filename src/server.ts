@@ -9,6 +9,7 @@ import { getFollowersHandler as getApubFollowers } from './activity-pub/follows.
 import { getIndex } from './web/index.ts';
 import { compileTemplates } from './web/template.ts';
 import { getLogin } from './web/login.ts';
+import { getFileHandler } from './web/file-handler.ts';
 
 export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -24,6 +25,9 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
     //Web handles
     router.get('/', getIndex);
     router.get('/login', getLogin)
+
+    //File handler
+    router.get(/res\/.*/, getFileHandler)
 
     app.use(bodyParser({
         encoding: undefined,
