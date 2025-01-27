@@ -1,5 +1,6 @@
 CREATE TABLE actors (
     id TEXT PRIMARY KEY,
+    hashed_password TEXT,
     preferred_username TEXT,
     summary TEXT,
     icon TEXT,
@@ -30,3 +31,11 @@ CREATE TABLE followers (
 -- "outbox": `${hostname}/actor/${user.id}/outbox`,
 -- "following": `${hostname}/actor/${user.id}/following`,
 -- "liked": `${hostname}/actor/${user.id}/liked`,
+
+-- web related tables
+CREATE TABLE sessions (
+    token TEXT PRIMARY KEY,
+    actor_id TEXT,
+
+    FOREIGN KEY (actor_id) REFERENCES actors(id)
+);

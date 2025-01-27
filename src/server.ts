@@ -8,8 +8,9 @@ import { getInboxHandler as getApubInbox, postInboxHandler as postApubInbox } fr
 import { getFollowersHandler as getApubFollowers } from './activity-pub/follows.ts';
 import { getIndex } from './web/index.ts';
 import { compileTemplates } from './web/template.ts';
-import { getLogin } from './web/login.ts';
+import { getLogin, postLogin } from './web/login.ts';
 import { getFileHandler } from './web/file-handler.ts';
+import { getRegister, postRegister } from './web/register.ts';
 
 export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -25,6 +26,9 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
     //Web handles
     router.get('/', getIndex);
     router.get('/login', getLogin)
+    router.post('/login', postLogin)
+    router.get('/register', getRegister)
+    router.post('/register', postRegister)
 
     //File handler
     router.get(/res\/.*/, getFileHandler)

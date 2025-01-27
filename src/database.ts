@@ -11,6 +11,7 @@ export async function initTestDB(): Promise<Database> {
 
 export interface DBActor {
     id: string,
+    hashed_password?: string,
     preferred_username?: string,
     summary?: string,
     icon?: string,
@@ -18,8 +19,8 @@ export interface DBActor {
 }
 
 export function createActor(db: Database, actor: DBActor) {
-    const stmt = db.prepare('INSERT INTO actors (id, preferred_username, summary, icon, url) VALUES (?, ?, ?, ?, ?)');
-    stmt.run(actor.id, actor.preferred_username, actor.summary, actor.icon, actor.url);
+    const stmt = db.prepare('INSERT INTO actors (id, hashed_password, preferred_username, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?)');
+    stmt.run(actor.id, actor.hashed_password, actor.preferred_username, actor.summary, actor.icon, actor.url);
 }
 
 export function getActorById(db: Database, actorId: string): DBActor | undefined {
@@ -72,4 +73,24 @@ export function deleteFollower(db: Database, following: string, follower: string
     const stmt = db.prepare(`DELETE FROM followers
     WHERE actor_id = ? AND follower_id = ?`);
     stmt.run(following, follower);
+}
+
+export interface DBSession {
+    token: string,
+    actor_id: string,
+}
+
+export function createSession(db: Database, session: DBSession) {
+    const stmt = db.prepare('INSERT INTO sessions (token, actor_id) VALUES (?, ?)');
+    stmt.run(session.token, session.actor_id);
+}
+
+export function getSession(db: Database, session: DBSession): DBSession | undefined {
+    const stmt = db.prepare('SELECT * FROM sessions WHERE token = ? AND actor_id = ?');
+    return stmt.get(session.token, session.actor_id) as DBSession | undefined;
+}
+
+export function deleteSession(db: Database, session: DBSession) {
+    const stmt = db.prepare(`DELETE FROM sessions WHERE token = ? AND actor_id = ?`);
+    stmt.run(session.token, session.actor_id);
 }

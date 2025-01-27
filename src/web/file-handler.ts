@@ -4,12 +4,12 @@ import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
 
 const knownFileTypes: Record<string, string> = {
-    'html': 'text/html',
-    'css': 'text/css',
-    'js': 'text/javascript',
-    'png': 'image/png',
-    'svg': 'image/svg+xml',
-    'txt': 'text/plain'
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'text/javascript',
+    '.png': 'image/png',
+    '.svg': 'image/svg+xml',
+    '.txt': 'text/plain'
 }
 
 export const getFileHandler = async (ctx: ParameterizedContext<ContextState>, next: Next) => {
