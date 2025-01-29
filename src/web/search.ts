@@ -18,8 +18,8 @@ export const getSearch = async (ctx: ParameterizedContext<ContextState>, next: N
     console.log('params', searchQuery)
     const queryResult = await searchUser('mastodon.social', searchQuery)
     if (queryResult) {
-        const userLink = queryResult.links.find(link => link.rel === 'self');
-        ingestUser(userLink.href)
+        const actorLink = queryResult.links.find(link => link.rel === 'self');
+        ingestActor(actorLink.href)
     }
     console.log('queryResult:')
     console.log(queryResult)
@@ -30,15 +30,14 @@ export const getSearch = async (ctx: ParameterizedContext<ContextState>, next: N
     ctx.response.body = res;
 }
 
-
-
-
-async function ingestUser(address: string): Promise<void> {
+async function ingestActor(address: string): Promise<void> {
     const res = await fetch(address, {
         headers: {
             'Accept': 'application/activity+json'
         }
     });
+    const actor = res.json();
+    console.log(actor)
 
     console.log(await res.text());
     getOutbox();
