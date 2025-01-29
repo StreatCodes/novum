@@ -11,6 +11,8 @@ import { compileTemplates } from './web/template.ts';
 import { getLogin, postLogin } from './web/login.ts';
 import { getFileHandler } from './web/file-handler.ts';
 import { getRegister, postRegister } from './web/register.ts';
+import { getFeed } from './web/feed.ts';
+import { getSearch } from './web/search.ts';
 
 export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -29,6 +31,8 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
     router.post('/login', postLogin)
     router.get('/register', getRegister)
     router.post('/register', postRegister)
+    router.get('/feed', getFeed)
+    router.get('/search', getSearch)
 
     //File handler
     router.get(/res\/.*/, getFileHandler)

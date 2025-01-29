@@ -2,7 +2,7 @@ import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
 import { renderWithBase } from "./template.ts";
 import { createSession, getActorById } from "../database.ts";
-import { generateToken, hashPassword, verifyPassword } from "../auth.ts";
+import { generateToken, verifyPassword } from "../auth.ts";
 
 export const getLogin = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     //User already logged in, redirect them to their feed?

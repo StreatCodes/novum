@@ -10,6 +10,7 @@ interface WebfingerLinks {
 
 export interface WebfingerResponse {
     subject: string,
+    aliases?: string[],
     links: WebfingerLinks[]
 }
 
@@ -61,4 +62,17 @@ export const handleWebfinger = (ctx: ParameterizedContext<ContextState>, next: N
 
     ctx.response.type = 'application/jrd+json';
     ctx.response.body = JSON.stringify(webfinger);
+}
+
+export async function searchUser(host: string, user: string): Promise<WebfingerResponse> {
+    const params = new URLSearchParams()
+    params.set('resource', user)
+
+    const res = await fetch(`https://${host}/.well-known/webfinger?${params.toString()}`, {
+        headers: {
+            'Accept': 'application/jrd+json'
+        }
+    });
+
+    return await res.json();
 }
