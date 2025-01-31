@@ -1,6 +1,6 @@
 import type { ParameterizedContext, Next } from 'koa';
 import type { ContextState } from "./index.ts";
-import { getActorById } from "./database.ts";
+import { getActorById } from "./database/index.ts";
 
 interface WebfingerLinks {
     rel: string,
@@ -21,6 +21,14 @@ interface UserResult {
 
 function userFromResource(resource: string): UserResult {
     const match = resource.match(/^acct:@?([a-z0-9-]+)@(.*)$/);
+    return {
+        name: match?.[1],
+        host: match?.[2]
+    }
+}
+
+export function userFromHandle(handle: string): UserResult {
+    const match = handle.match(/^@?([A-Za-z0-9-]+)@(.*)$/);
     return {
         name: match?.[1],
         host: match?.[2]
@@ -64,11 +72,13 @@ export const handleWebfinger = (ctx: ParameterizedContext<ContextState>, next: N
     ctx.response.body = JSON.stringify(webfinger);
 }
 
-export async function searchUser(host: string, user: string): Promise<WebfingerResponse> {
-    const params = new URLSearchParams()
-    params.set('resource', user)
+export async function searchUser(user: UserResult): Promise<WebfingerResponse> {
+    if (!user.name || !user.host) throw new Error("Can't lookup user without username and host")
 
-    const res = await fetch(`https://${host}/.well-known/webfinger?${params.toString()}`, {
+    const params = new URLSearchParams()
+    params.set('resource', `${user.name}@${user.host}`)
+
+    const res = await fetch(`https://${user.host}/.well-known/webfinger?${params.toString()}`, {
         headers: {
             'Accept': 'application/jrd+json'
         }

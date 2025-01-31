@@ -1,7 +1,7 @@
 import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
 import { renderWithBase } from "./template.ts";
-import { createActor, createSession, getActorById } from "../database.ts";
+import { createActor, createSession, getActorById } from "../database/index.ts";
 import { generateToken, hashPassword, passwordInvalid, usernameInvalid } from "../auth.ts";
 
 export const getRegister = (ctx: ParameterizedContext<ContextState>, next: Next) => {
@@ -41,9 +41,11 @@ export const postRegister = (ctx: ParameterizedContext<ContextState>, next: Next
     }
 
     createActor(db, {
+        '@context': 'https://www.w3.org/ns/activitystreams',
         id: formData.username,
-        preferred_username: formData.username,
-        hashed_password: hashedPassword
+        type: 'Person',
+        preferredUsername: formData.username,
+        hashedPassword: hashedPassword,
     });
 
     const sessionToken = generateToken();

@@ -1,7 +1,7 @@
 import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
-import type { APubActivity, APubFollow, APubFollower, APubNote, APubOrderedCollection } from "./activity-pub.ts";
-import { addFollower, addItemToInbox, deleteFollower, getActorById, getInboxItems } from "../database.ts";
+import type { APubActivity, APubFollower, APubNote, APubOrderedCollection } from "./activity-pub.ts";
+import { addFollower } from "../database/index.ts";
 
 export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
     const db = ctx.state.db;
@@ -19,14 +19,15 @@ export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: 
                 return
             }
 
-            addItemToInbox(db, {
-                actor_id: username,
-                id: data.id,
-                type: object.type,
-                content: object.content,
-                received: new Date().toISOString(),
-                attributedTo: object.attributedTo
-            });
+            // TODO
+            // addItemToInbox(db, {
+            //     actor_id: username,
+            //     id: data.id,
+            //     type: object.type,
+            //     content: object.content,
+            //     received: new Date().toISOString(),
+            //     attributedTo: object.attributedTo
+            // });
 
             ctx.response.status = 200;
             break;
@@ -49,12 +50,12 @@ export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: 
             break;
         }
         case 'Undo': {
-            if ((data.object as any)?.type === 'Follow') {
-                const object = data.object as APubFollow;
-                deleteFollower(db, username, object.actor);
-                ctx.response.status = 200;
-                break;
-            }
+            // if ((data.object as any)?.type === 'Follow') {
+            //     const object = data.object as APubFollow;
+            //     deleteFollower(db, username, object.actor);
+            //     ctx.response.status = 200;
+            //     break;
+            // }
 
             ctx.response.status = 501;
             break;
@@ -68,26 +69,3 @@ export const postInboxHandler = (ctx: ParameterizedContext<ContextState>, next: 
     ctx.response.type = 'application/activity+json';
     return;
 };
-
-export const getInboxHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
-    const db = ctx.state.db;
-    const username = ctx.params.username;
-
-    const userExists = getActorById(db, username);
-    if (!userExists) {
-        ctx.response.status = 404;
-        return;
-    }
-    const items = getInboxItems(db, username);
-
-    const collection: APubOrderedCollection = {
-        "@context": "https://www.w3.org/ns/activitystreams",
-        summary: `${username}'s notes`,
-        type: "OrderedCollection",
-        totalItems: items.length,
-        orderedItems: items
-    }
-
-    ctx.response.type = 'application/activity+json';
-    ctx.response.body = JSON.stringify(collection);
-}

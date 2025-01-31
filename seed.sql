@@ -1,41 +1,54 @@
 CREATE TABLE actors (
     id TEXT PRIMARY KEY,
-    hashed_password TEXT,
-    preferred_username TEXT,
+    hashedPassword TEXT,
+    preferredUsername TEXT,
     summary TEXT,
     icon TEXT,
     url TEXT
 );
 
-CREATE TABLE inbox (
+CREATE TABLE objects (
     id TEXT PRIMARY KEY,
-    actor_id TEXT NOT NULL,
+    actor TEXT,
     type TEXT NOT NULL,
+    published TEXT NOT NULL,
     content TEXT,
-    received TEXT NOT NULL,
-    published Text,
-    attributedTo TEXT,
+    context TEXT,
+    name TEXT,
+    endTime TEXT,
+    startTime TEXT,
+    summary TEXT,
+    updated TEXT,
+    url TEXT,
+    mediaType TEXT,
+    duration TEXT,
+    object TEXT,
+    target TEXT,
+    result TEXT,
+    origin TEXT,
 
-    FOREIGN KEY (actor_id) REFERENCES actors(id)
+    FOREIGN KEY (actor) REFERENCES actors(id)
 );
+
+CREATE INDEX actorIndex ON objects(actor);
+CREATE INDEX typeIndex ON objects(type);
+CREATE INDEX publishedIndex ON objects(published);
 
 CREATE TABLE followers (
     id TEXT PRIMARY KEY,
-    actor_id TEXT NOT NULL,
-    follower_id TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    follower TEXT NOT NULL,
     received TEXT NOT NULL,
 
-    FOREIGN KEY (actor_id) REFERENCES actors(id)
+    FOREIGN KEY (actor) REFERENCES actors(id)
 );
 
--- "outbox": `${hostname}/actor/${user.id}/outbox`,
--- "following": `${hostname}/actor/${user.id}/following`,
--- "liked": `${hostname}/actor/${user.id}/liked`,
+-- "liked": `${hostname}/actor/${user.id}/liked`,???
 
 -- web related tables
 CREATE TABLE sessions (
     token TEXT PRIMARY KEY,
-    actor_id TEXT,
+    actor TEXT,
 
-    FOREIGN KEY (actor_id) REFERENCES actors(id)
+    FOREIGN KEY (actor) REFERENCES actors(id)
 );

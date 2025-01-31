@@ -1,5 +1,6 @@
 import Sqlite, { type Database } from "better-sqlite3";
 import fs from 'node:fs/promises';
+import type { APubActivity, APubActor, APubNote, APubObject } from "../activity-pub/activity-pub.ts";
 
 export async function initTestDB(): Promise<Database> {
     const seedSql = await fs.readFile('seed.sql', 'utf-8');
@@ -9,18 +10,13 @@ export async function initTestDB(): Promise<Database> {
     return db;
 }
 
-export interface DBActor {
-    id: string,
-    hashed_password?: string,
-    preferred_username?: string,
-    summary?: string,
-    icon?: string,
-    url?: string
+export interface DBActor extends APubActor {
+    hashedPassword?: string,
 }
 
 export function createActor(db: Database, actor: DBActor) {
-    const stmt = db.prepare('INSERT INTO actors (id, hashed_password, preferred_username, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?)');
-    stmt.run(actor.id, actor.hashed_password, actor.preferred_username, actor.summary, actor.icon, actor.url);
+    const stmt = db.prepare('INSERT INTO actors (id, hashedPassword, preferredUsername, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?)');
+    stmt.run(actor.id, actor.hashedPassword, actor.preferredUsername, actor.summary, actor.icon, actor.url);
 }
 
 export function getActorById(db: Database, actorId: string): DBActor | undefined {
@@ -28,26 +24,27 @@ export function getActorById(db: Database, actorId: string): DBActor | undefined
     return stmt.get(actorId) as DBActor | undefined;
 }
 
-export interface DBInboxItem {
-    id: string,
-    actor_id: string,
-    type: 'Note',
-    content?: string,
-    received: string,
-    published?: string,
-    attributedTo?: string
+export function addObject(db: Database, item: APubObject | APubActivity | APubNote) {
+    const stmt = db.prepare(`INSERT INTO objects
+    (id, actor, type, published, content, context, name, endTime,
+    startTime, summary, updated, url, mediaType, duration, object,
+    target, result, origin)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    stmt.run(item.id, item['actor'], item.type, item.published, item.content,
+        item.context, item.name, item.endTime, item.startTime, item.summary,
+        item.updated, item.url, item.mediaType, item.duration, item['object'],
+        item['target'], item['result'], item['origin']
+    );
 }
 
-export function getInboxItems(db: Database, username: string): DBInboxItem[] {
-    const stmt = db.prepare(`SELECT * FROM inbox WHERE actor_id = ?`);
-    return stmt.all(username) as DBInboxItem[];
+export function getObjectById(db: Database, objectId: string): APubObject | APubActivity | APubNote {
+    const stmt = db.prepare(`SELECT * FROM objects WHERE id = ?`);
+    return stmt.get(objectId) as APubObject | APubActivity | APubNote | undefined;
 }
 
-export function addItemToInbox(db: Database, item: DBInboxItem) {
-    const stmt = db.prepare(`INSERT INTO inbox
-    (id, actor_id, type, content, received, published, attributedTo)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`);
-    stmt.run(item.id, item.actor_id, item.type, item.content, item.received, item.published, item.attributedTo);
+export function getObjectsByActor(db: Database, actorId: string): Array<APubObject | APubActivity | APubNote> {
+    const stmt = db.prepare(`SELECT * FROM objects WHERE actor = ?`);
+    return stmt.all(actorId) as Array<APubObject | APubActivity | APubNote>;
 }
 
 export interface DBFollow {

@@ -1,13 +1,12 @@
 import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
 import { renderWithBase } from "./template.ts";
-import { searchUser } from "../webfinger.ts";
-
-interface SearchParams {
-    query: string,
-}
+import { searchUser, userFromHandle } from "../webfinger.ts";
+import { ingestActor } from "../database/ingest.ts";
 
 export const getSearch = async (ctx: ParameterizedContext<ContextState>, next: Next) => {
+    const db = ctx.state.db;
+
     const params = ctx.query;
     let searchQuery = params.query;
     if (Array.isArray(searchQuery)) {
@@ -15,41 +14,17 @@ export const getSearch = async (ctx: ParameterizedContext<ContextState>, next: N
     }
 
     //TODO first lookup local copy
-    console.log('params', searchQuery)
-    const queryResult = await searchUser('mastodon.social', searchQuery)
+    const user = userFromHandle(searchQuery);
+    console.log(user)
+
+    const queryResult = await searchUser(user)
     if (queryResult) {
         const actorLink = queryResult.links.find(link => link.rel === 'self');
-        ingestActor(actorLink.href)
+        await ingestActor(db, actorLink.href, true)
     }
-    console.log('queryResult:')
-    console.log(queryResult)
 
     const res = renderWithBase('search.hbs', {});
 
     ctx.response.type = 'text/html; charset=utf-8';
     ctx.response.body = res;
-}
-
-async function ingestActor(address: string): Promise<void> {
-    const res = await fetch(address, {
-        headers: {
-            'Accept': 'application/activity+json'
-        }
-    });
-    const actor = res.json();
-    console.log(actor)
-
-    console.log(await res.text());
-    getOutbox();
-}
-
-export async function getOutbox(): Promise<void> {
-
-    const res = await fetch(`https://mastodon.social/users/streats/outbox`, {
-        headers: {
-            'Accept': 'application/activity+json'
-        }
-    });
-
-    console.log(await res.text());
 }

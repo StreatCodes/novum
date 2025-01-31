@@ -1,7 +1,7 @@
 import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
 import { renderWithBase } from "./template.ts";
-import { createSession, getActorById } from "../database.ts";
+import { createSession, getActorById } from "../database/index.ts";
 import { generateToken, verifyPassword } from "../auth.ts";
 
 export const getLogin = (ctx: ParameterizedContext<ContextState>, next: Next) => {
@@ -32,7 +32,7 @@ export const postLogin = (ctx: ParameterizedContext<ContextState>, next: Next) =
         return;
     }
 
-    const passwordMatch = verifyPassword(formData.password, actor.hashed_password)
+    const passwordMatch = verifyPassword(formData.password, actor.hashedPassword)
     if (!passwordMatch) {
         ctx.response.body = `<p class="error">Invalid credentials</p>`
         return;

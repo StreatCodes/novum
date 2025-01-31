@@ -1,6 +1,6 @@
 import type { Next, ParameterizedContext } from "koa";
 import type { ContextState } from "../index.ts";
-import { getActorById } from "../database.ts";
+import { getActorById } from "../database/index.ts";
 import type { APubActor } from "./activity-pub.ts";
 
 export const actorHandler = (ctx: ParameterizedContext<ContextState>, next: Next) => {
@@ -26,7 +26,7 @@ export const actorHandler = (ctx: ParameterizedContext<ContextState>, next: Next
         "outbox": `${hostname}/actor/${user.id}/outbox`,
         "name": user.id,
         "summary": user.summary,
-        "preferredUsername": user.preferred_username,
+        "preferredUsername": user.preferredUsername,
         "url": user.url,
         "icon": user.icon
     }

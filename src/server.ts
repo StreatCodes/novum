@@ -4,7 +4,7 @@ import type { Database } from "better-sqlite3";
 import { bodyParser } from "@koa/bodyparser";
 import { handleWebfinger as getWebfinger } from './webfinger.ts';
 import { actorHandler as getApubActor } from './activity-pub/actor.ts';
-import { getInboxHandler as getApubInbox, postInboxHandler as postApubInbox } from './activity-pub/inbox.ts';
+import { postInboxHandler as postApubInbox } from './activity-pub/inbox.ts';
 import { getFollowersHandler as getApubFollowers } from './activity-pub/follows.ts';
 import { getIndex } from './web/index.ts';
 import { compileTemplates } from './web/template.ts';
@@ -22,7 +22,6 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
     router.get('/.well-known/webfinger', getWebfinger);
     router.get('/actor/:username', getApubActor);
     router.post('/actor/:username/inbox', postApubInbox);
-    router.get('/actor/:username/inbox', getApubInbox);
     router.get('/actor/:username/followers', getApubFollowers);
 
     //Web handles
