@@ -13,6 +13,7 @@ import { getFileHandler } from './web/file-handler.ts';
 import { getRegister, postRegister } from './web/register.ts';
 import { getFeed } from './web/feed.ts';
 import { getSearch } from './web/search.ts';
+import { getUser } from './web/user.ts';
 
 export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -26,11 +27,12 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
 
     //Web handles
     router.get('/', getIndex);
+    router.get('/@:handle', getUser);
     router.get('/login', getLogin)
     router.post('/login', postLogin)
     router.get('/register', getRegister)
     router.post('/register', postRegister)
-    router.get('/feed', getFeed)
+    router.get('/feed', getFeed) //TODO there should be no feed path, it should just be on /
     router.get('/search', getSearch)
 
     //File handler

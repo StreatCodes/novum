@@ -13,11 +13,12 @@ export async function ingestActor(db: Database, address: string, recursive = fal
 
     const actor: APubActor = await res.json();
 
-    //TODO move this to its own function normalizeActor
+    //TODO move this to its own function normalizeActor RETURN DB ACTOR?
     if (typeof actor.icon === 'object') actor.icon = ((actor as any)['icon']['url'] as string)
+    const url = new URL(actor.id)
 
     const exists = getActorById(db, actor.id)
-    if (!exists) createActor(db, actor);
+    if (!exists) createActor(db, { ...actor, host: url.host });
 
     if (recursive) await ingestOutbox(db, actor.outbox);
 
@@ -60,7 +61,6 @@ export async function ingestActivity(db: Database, activity: APubActivity): Prom
     const exists = getObjectById(db, activity.id);
     if (!exists) addObject(db, activity);
 }
-
 
 export async function ingestObject(db: Database, object: APubObject, actorId: string): Promise<void> {
     console.log('Ingesting Object:', object.id)

@@ -24,4 +24,36 @@ time, mark, audio, video {
 
 body {
 	font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  }
+	background-color: #222;
+    color: #c8c8c8;
+    margin: 0 auto;
+    padding: 40px 20px;
+    max-width: 900px;
+    font-size: 1.2em;
+}
+
+input[type="text"], input[type="search"], textarea {
+	border: solid 3px #333;
+	background-color: #333;
+	outline: none;
+	border-radius: 6px;
+	padding: 8px 12px;
+	color: #c8c8c8;
+	font-size: 1em;
+
+	&:focus {
+		border-color: #00a7db;
+	}
+}
+
+nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+
+	input {
+		max-width: 100%;
+        width: 500px;
+	}
+}

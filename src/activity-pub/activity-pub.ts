@@ -37,8 +37,8 @@ export interface APubActor extends APubObject {
     liked?: string,
     inbox?: string,
     outbox?: string,
-    preferredUsername?: string,
-    name?: string,
+    preferredUsername: string, //strangely this is the users identifier @{user}@example.com
+    name?: string, //This is actually the users display name
     summary?: string,
     icon?: string,
     url?: string,

@@ -43,6 +43,7 @@ export const postRegister = (ctx: ParameterizedContext<ContextState>, next: Next
     createActor(db, {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: formData.username,
+        host: ctx.state.host,
         type: 'Person',
         preferredUsername: formData.username,
         hashedPassword: hashedPassword,

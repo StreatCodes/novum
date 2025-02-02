@@ -1,11 +1,15 @@
 CREATE TABLE actors (
     id TEXT PRIMARY KEY,
+    host TEXT NOT NULL,
+    preferredUsername TEXT NOT NULL,
+    name TEXT,
     hashedPassword TEXT,
-    preferredUsername TEXT,
     summary TEXT,
     icon TEXT,
     url TEXT
 );
+CREATE INDEX hostIndex ON actors(host);
+CREATE INDEX preferredUsernameIndex ON actors(preferredUsername);
 
 CREATE TABLE objects (
     id TEXT PRIMARY KEY,
@@ -29,7 +33,6 @@ CREATE TABLE objects (
 
     FOREIGN KEY (actor) REFERENCES actors(id)
 );
-
 CREATE INDEX actorIndex ON objects(actor);
 CREATE INDEX typeIndex ON objects(type);
 CREATE INDEX publishedIndex ON objects(published);

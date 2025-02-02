@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="385" height="385" viewBox="0 0 385 385" xmlns="http://www.w3.org/2000/svg">
+        <path id="Circle" fill="#eeeeee" fill-opacity="0.975218" fill-rule="evenodd" stroke="none" d="M 385 192.5 C 385 86.185181 298.814819 0 192.5 0 C 86.185188 0 0 86.185181 0 192.5 C 0 298.814819 86.185188 385 192.5 385 C 298.814819 385 385 298.814819 385 192.5 Z"/>
+        <path id="Rounded-Rectangle" fill="#d97364" fill-rule="evenodd" stroke="none" d="M 86 192 C 86 251.094467 133.905533 299 193 299 C 252.094467 299 300 251.094467 300 192 L 300 97 C 300 90.372589 294.627411 85 288 85 L 193 85 C 133.905533 85 86 132.905533 86 192 Z"/>
+        <path id="Circle-copy" fill="#eeeeee" fill-opacity="0.975218" fill-rule="evenodd" stroke="none" d="M 220 192.5 C 220 177.312164 207.687836 165 192.5 165 C 177.312164 165 165 177.312164 165 192.5 C 165 207.687836 177.312164 220 192.5 220 C 207.687836 220 220 207.687836 220 192.5 Z"/>
+</svg>

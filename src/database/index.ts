@@ -11,17 +11,23 @@ export async function initTestDB(): Promise<Database> {
 }
 
 export interface DBActor extends APubActor {
+    host: string;
     hashedPassword?: string,
 }
 
 export function createActor(db: Database, actor: DBActor) {
-    const stmt = db.prepare('INSERT INTO actors (id, hashedPassword, preferredUsername, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?)');
-    stmt.run(actor.id, actor.hashedPassword, actor.preferredUsername, actor.summary, actor.icon, actor.url);
+    const stmt = db.prepare('INSERT INTO actors (id, host, hashedPassword, preferredUsername, name, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    stmt.run(actor.id, actor.host, actor.hashedPassword, actor.preferredUsername, actor.name, actor.summary, actor.icon, actor.url);
 }
 
 export function getActorById(db: Database, actorId: string): DBActor | undefined {
     const stmt = db.prepare('SELECT * FROM actors WHERE id = ?');
     return stmt.get(actorId) as DBActor | undefined;
+}
+
+export function getActorByHandle(db: Database, preferredUsername: string, host: string): DBActor | undefined {
+    const stmt = db.prepare('SELECT * FROM actors WHERE preferredUsername = ? AND host = ?');
+    return stmt.get(preferredUsername, host) as DBActor | undefined;
 }
 
 export function addObject(db: Database, item: APubObject | APubActivity | APubNote) {
