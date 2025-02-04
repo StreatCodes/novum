@@ -24,16 +24,14 @@ time, mark, audio, video {
 
 body {
 	font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	background-color: #222;
+	background-color: #181818;
     color: #c8c8c8;
-    margin: 0 auto;
-    padding: 40px 20px;
-    max-width: 900px;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
-input[type="text"], input[type="search"], textarea {
-	border: solid 3px #333;
+input[type="text"], input[type="search"], input[type="password"],  textarea {
+	display: block;
+	border: solid 2px #444;
 	background-color: #333;
 	outline: none;
 	border-radius: 6px;
@@ -46,14 +44,76 @@ input[type="text"], input[type="search"], textarea {
 	}
 }
 
+button {
+	background-color: #0d98c1;
+	display: inline-block;
+	padding: 8px 12px;
+	font-size: 1em;
+	cursor: pointer;
+	border-radius: 6px;
+	border: 0;
+	color: white;
+
+	&:hover, &:focus {
+		background-color: #00afe4;
+	}
+}
+
+label {
+	display: block;
+}
+
+a {
+    color: #d97364;
+    cursor: pointer;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+p {
+	margin-bottom: 4px;
+}
+
 nav {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 16px;
+	width: 100%;
+	background-color: #222;
+	padding: 10px;
+	box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px, rgba(0, 0, 0, 0.12) 0px 2px 3px;
+
+	a {
+		line-height: 0;
+	}
 
 	input {
 		max-width: 100%;
         width: 500px;
+	}
+}
+
+main {
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+.card {
+	padding: 20px;
+	background-color: #222;
+	border-radius: 10px;
+	box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px, rgba(0, 0, 0, 0.12) 0px 2px 3px;
+}
+
+.auth-form {
+	max-width: 350px;
+	margin: 120px auto;
+	
+	input, button {
+		width: 100%;
+		margin-bottom: 10px;
 	}
 }

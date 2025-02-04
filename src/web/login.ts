@@ -42,6 +42,6 @@ export const postLogin = (ctx: ParameterizedContext<ContextState>, next: Next) =
     createSession(db, { actor_id: actor.id, token: sessionToken })
 
     ctx.cookies.set("token", sessionToken, { secure: ctx.secure, httpOnly: true, sameSite: "lax" });
-    ctx.set('HX-Redirect', '/feed')
+    ctx.set('HX-Redirect', '/')
     ctx.status = 200;
 }

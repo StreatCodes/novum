@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa, { type ParameterizedContext } from 'koa';
 import Router from '@koa/router';
 import type { Database } from "better-sqlite3";
 import { bodyParser } from "@koa/bodyparser";
@@ -11,9 +11,9 @@ import { compileTemplates } from './web/template.ts';
 import { getLogin, postLogin } from './web/login.ts';
 import { getFileHandler } from './web/file-handler.ts';
 import { getRegister, postRegister } from './web/register.ts';
-import { getFeed } from './web/feed.ts';
 import { getSearch } from './web/search.ts';
 import { getUser } from './web/user.ts';
+import type { ContextState } from './index.ts';
 
 export async function initServer(db: Database, listenAddr: string, listenPort: number, publicUrl?: string) {
     const app = new Koa();
@@ -32,7 +32,6 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
     router.post('/login', postLogin)
     router.get('/register', getRegister)
     router.post('/register', postRegister)
-    router.get('/feed', getFeed) //TODO there should be no feed path, it should just be on /
     router.get('/search', getSearch)
 
     //File handler
@@ -44,7 +43,7 @@ export async function initServer(db: Database, listenAddr: string, listenPort: n
             json: ['application/activity+json', 'application/json']
         }
     }));
-    app.use(async (ctx, next) => {
+    app.use(async (ctx: ParameterizedContext<ContextState>, next) => {
         ctx.state.db = db;
         ctx.state.host = publicUrl;
         await next();

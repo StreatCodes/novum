@@ -1,14 +1,16 @@
-<form hx-post="/login" hx-target="#alert" hx-swap="innerHTML">
-    <div id="alert"></div>
-    <label>
-        <p>Username</p>
-        <input type="text" name="username">
-    </label>
-    <label>
-        <p>Password</p>
-        <input type="password" name="password">
-    </label>
-    <button type="submit">Login</button>
+<div class="card auth-form">
+    <form hx-post="/login" hx-target="#alert" hx-swap="innerHTML">
+        <div id="alert"></div>
+        <label>
+            <p>Username</p>
+            <input type="text" name="username">
+        </label>
+        <label>
+            <p>Password</p>
+            <input type="password" name="password">
+        </label>
+        <button type="submit">Login</button>
 
-    <p>Don't have an account? <a href="/register">Register here.</a></p>
-</form>
+        <p>Don't have an account? <a href="/register">Register here</a></p>
+    </form>
+</div>

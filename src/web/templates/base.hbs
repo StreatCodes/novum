@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/res/htmx.min.js"></script>
-    <link rel="stylesheet" href="/res/style.css">
-      <link rel="icon" href="/res/logo.svg">
-    <title>Novum</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/res/htmx.min.js"></script>
+  <link rel="stylesheet" href="/res/style.css">
+  <link rel="icon" href="/res/logo.svg">
+  <title>Novum</title>
 </head>
+
 <body>
+
+  <nav>
+    <a href="/">
+      <img src="/res/logo.svg" width="40">
+    </a>
+    <form method="get" action="/search">
+      <input type="search" name="query" placeholder="Search a user">
+    </form>
+    {{#if user}}
+    <div>{{user.name}}</div>
+    {{else}}
+    <a href="/login">Login</a>
+    {{/if}}
+  </nav>
+
+  <main>
     {{{body}}}
+  </main>
 </body>
+
 </html>
