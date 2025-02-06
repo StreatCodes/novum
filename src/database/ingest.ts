@@ -1,6 +1,7 @@
 import type { Database } from "better-sqlite3";
 import type { APubActivity, APubActor, APubObject, APubOrderedCollection, APubOutbox } from "../activity-pub/activity-pub.ts";
 import { addObject, createActor, getActorById, getObjectById } from "./index.ts";
+import { normalizeActor, normalizeImage } from "./normalize.ts";
 
 export async function ingestActor(db: Database, address: string, recursive = false): Promise<void> {
     console.log('Ingesting Actor:', address)
@@ -12,16 +13,17 @@ export async function ingestActor(db: Database, address: string, recursive = fal
     });
 
     const actor: APubActor = await res.json();
+    const err = (actor as any).error; //TODO do better
+    if (err) {
+        console.log(`cannot ingest ${address} error ${err}`)
+        return
+    }
 
-    //TODO move this to its own function normalizeActor RETURN DB ACTOR?
-    if (typeof actor.icon === 'object') actor.icon = ((actor as any)['icon']['url'] as string)
-    const url = new URL(actor.id)
+    const dbActor = normalizeActor(actor);
+    const exists = getActorById(db, dbActor.id)
+    if (!exists) createActor(db, dbActor);
 
-    const exists = getActorById(db, actor.id)
-    if (!exists) createActor(db, { ...actor, host: url.host });
-
-    if (recursive) await ingestOutbox(db, actor.outbox);
-
+    if (recursive) await ingestOutbox(db, dbActor.outbox);
 }
 
 export async function ingestOutbox(db: Database, outboxUrl: string): Promise<void> {

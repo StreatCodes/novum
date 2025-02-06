@@ -6,7 +6,10 @@ CREATE TABLE actors (
     hashedPassword TEXT,
     summary TEXT,
     icon TEXT,
-    url TEXT
+    image TEXT,
+    url TEXT,
+    published TEXT,
+    publicKey TEXT
 );
 CREATE INDEX hostIndex ON actors(host);
 CREATE INDEX preferredUsernameIndex ON actors(preferredUsername);

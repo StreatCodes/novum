@@ -16,8 +16,8 @@ export interface DBActor extends APubActor {
 }
 
 export function createActor(db: Database, actor: DBActor) {
-    const stmt = db.prepare('INSERT INTO actors (id, host, hashedPassword, preferredUsername, name, summary, icon, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-    stmt.run(actor.id, actor.host, actor.hashedPassword, actor.preferredUsername, actor.name, actor.summary, actor.icon, actor.url);
+    const stmt = db.prepare('INSERT INTO actors (id, host, hashedPassword, preferredUsername, name, summary, icon, image, url, published, publicKey) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    stmt.run(actor.id, actor.host, actor.hashedPassword, actor.preferredUsername, actor.name, actor.summary, actor.icon, actor.image, actor.url, actor.published, actor.publicKey);
 }
 
 export function getActorById(db: Database, actorId: string): DBActor | undefined {
@@ -55,45 +55,45 @@ export function getObjectsByActor(db: Database, actorId: string): Array<APubObje
 
 export interface DBFollow {
     id: string,
-    actor_id: string,
-    follower_id: string,
+    actorId: string,
+    followerId: string,
     received: string
 }
 
 export function getFollowers(db: Database, username: string): DBFollow[] {
-    const stmt = db.prepare(`SELECT * FROM followers WHERE actor_id = ?`);
+    const stmt = db.prepare(`SELECT * FROM followers WHERE actor = ?`);
     return stmt.all(username) as DBFollow[];
 }
 
 export function addFollower(db: Database, follow: DBFollow) {
     const stmt = db.prepare(`INSERT INTO followers
-    (id, actor_id, follower_id, received)
+    (id, actor, followerId, received)
     VALUES (?, ?, ?, ?)`);
-    stmt.run(follow.id, follow.actor_id, follow.follower_id, follow.received);
+    stmt.run(follow.id, follow.actorId, follow.followerId, follow.received);
 }
 
 export function deleteFollower(db: Database, following: string, follower: string) {
     const stmt = db.prepare(`DELETE FROM followers
-    WHERE actor_id = ? AND follower_id = ?`);
+    WHERE actor = ? AND followerId = ?`);
     stmt.run(following, follower);
 }
 
 export interface DBSession {
     token: string,
-    actor_id: string,
+    actorId: string,
 }
 
 export function createSession(db: Database, session: DBSession) {
-    const stmt = db.prepare('INSERT INTO sessions (token, actor_id) VALUES (?, ?)');
-    stmt.run(session.token, session.actor_id);
+    const stmt = db.prepare('INSERT INTO sessions (token, actor) VALUES (?, ?)');
+    stmt.run(session.token, session.actorId);
 }
 
 export function getSession(db: Database, session: DBSession): DBSession | undefined {
-    const stmt = db.prepare('SELECT * FROM sessions WHERE token = ? AND actor_id = ?');
-    return stmt.get(session.token, session.actor_id) as DBSession | undefined;
+    const stmt = db.prepare('SELECT * FROM sessions WHERE token = ? AND actor = ?');
+    return stmt.get(session.token, session.actorId) as DBSession | undefined;
 }
 
 export function deleteSession(db: Database, session: DBSession) {
-    const stmt = db.prepare(`DELETE FROM sessions WHERE token = ? AND actor_id = ?`);
-    stmt.run(session.token, session.actor_id);
+    const stmt = db.prepare(`DELETE FROM sessions WHERE token = ? AND actor = ?`);
+    stmt.run(session.token, session.actorId);
 }

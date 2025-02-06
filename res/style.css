@@ -1,5 +1,5 @@
 * {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html, body, div, span, applet, object, iframe,
@@ -10,8 +10,8 @@ small, strike, strong, sub, sup, tt, var,
 b, u, i, center, dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -25,11 +25,14 @@ time, mark, audio, video {
 body {
 	font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	background-color: #181818;
-    color: #c8c8c8;
-    font-size: 1.1em;
+	color: #c8c8c8;
+	font-size: 1.1em;
 }
 
-input[type="text"], input[type="search"], input[type="password"],  textarea {
+input[type="text"],
+input[type="search"],
+input[type="password"],
+textarea {
 	display: block;
 	border: solid 2px #444;
 	background-color: #333;
@@ -54,7 +57,8 @@ button {
 	border: 0;
 	color: white;
 
-	&:hover, &:focus {
+	&:hover,
+	&:focus {
 		background-color: #00afe4;
 	}
 }
@@ -64,8 +68,8 @@ label {
 }
 
 a {
-    color: #d97364;
-    cursor: pointer;
+	color: #d97364;
+	cursor: pointer;
 
 	&:hover {
 		text-decoration: underline;
@@ -90,15 +94,20 @@ nav {
 		line-height: 0;
 	}
 
+	form {
+		width: 100%;
+		max-width: 500px;
+		margin: 0 10px;
+	}
+
 	input {
-		max-width: 100%;
-        width: 500px;
+		width: 100%;
 	}
 }
 
 main {
-    margin: 0 auto;
-    max-width: 900px;
+	margin: 0 auto;
+	max-width: 900px;
 }
 
 .card {
@@ -111,9 +120,33 @@ main {
 .auth-form {
 	max-width: 350px;
 	margin: 120px auto;
-	
-	input, button {
+
+	input,
+	button {
 		width: 100%;
 		margin-bottom: 10px;
+	}
+}
+
+.profile-result {
+	display: flex;
+
+	img {
+		width: 120px;
+		border-radius: 50%;
+		margin-right: 20px;
+	}
+
+	a {
+		display: block;
+		margin-bottom: 5px;
+	}
+
+	h2 {
+		font-size: 1.2em;
+	}
+
+	p {
+		font-size: 0.9em;
 	}
 }

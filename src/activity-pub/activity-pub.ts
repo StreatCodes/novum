@@ -41,7 +41,9 @@ export interface APubActor extends APubObject {
     name?: string, //This is actually the users display name
     summary?: string,
     icon?: string,
+    image?: string,
     url?: string,
+    publicKey?: string | APubPublicKey;
 }
 
 export interface APubOrderedCollection<T> {
@@ -75,4 +77,10 @@ export interface APubOutbox extends Object {
     totalItems: number,
     first: string,
     last: string
+}
+
+export interface APubPublicKey {
+    id: string,
+    owner: string,
+    publicKeyPem: string
 }

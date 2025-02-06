@@ -50,9 +50,9 @@ export const postRegister = (ctx: ParameterizedContext<ContextState>, next: Next
     });
 
     const sessionToken = generateToken();
-    createSession(db, { actor_id: formData.username, token: sessionToken })
+    createSession(db, { actorId: formData.username, token: sessionToken })
 
     ctx.cookies.set("token", sessionToken, { secure: ctx.secure, httpOnly: true, sameSite: "lax" });
-    ctx.set('HX-Redirect', '/feed')
+    ctx.set('HX-Redirect', '/')
     ctx.status = 200;
 }
